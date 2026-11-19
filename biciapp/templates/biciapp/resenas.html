@@ -1,0 +1,53 @@
+{% extends 'biciapp/base.html' %}
+
+{% block title %}BiciStore | Reseñas{% endblock %}
+
+{% block content %}
+<main>
+    <h1 class="titulo">⭐ Reseñas de nuestros clientes</h1>
+    <p class="descripcion">Conoce opiniones sobre nuestros productos y administra tus reseñas.</p>
+
+    <section class="resenas" aria-label="Opiniones de clientes">
+        {% for resena in resenas %}
+            <article class="resena">
+                <div class="estrellas" aria-label="Calificación: {{ resena.estrellas }} de 5">{{ resena.estrellas_visual }}</div>
+                <p>“{{ resena.texto }}”</p>
+                <h3>— {{ resena.autor }}</h3>
+                {% if resena.compra %}<small>Compra: {{ resena.compra }}</small>{% endif %}
+                <div class="acciones-resena">
+                    <a class="boton-secundario" href="{% url 'editar_resena' resena.id %}">Editar</a>
+                    <form method="post" action="{% url 'eliminar_resena' resena.id %}" onsubmit="return confirm('¿Seguro que quieres eliminar esta reseña?');">
+                        {% csrf_token %}
+                        <button class="boton-eliminar" type="submit">Eliminar</button>
+                    </form>
+                </div>
+            </article>
+        {% empty %}
+            <p class="sin-resultados">Todavía no hay reseñas. ¡Sé el primero en escribir una!</p>
+        {% endfor %}
+    </section>
+
+    <section class="opinion">
+        <h2>¿Ya compraste una bicicleta?</h2>
+        <p>Comparte tu experiencia con nosotros.</p>
+        <form method="post" action="{% url 'resenas' %}">
+            {% csrf_token %}
+            <label for="texto">Tu reseña</label>
+            <textarea id="texto" name="texto" placeholder="Escribe tu reseña aquí..." required></textarea>
+            <label for="autor">Tu nombre</label>
+            <input id="autor" name="autor" type="text" placeholder="Ej. Ana G." required>
+            <label for="compra">Producto comprado (opcional)</label>
+            <input id="compra" name="compra" type="text" placeholder="Ej. Trek Marlin 7 Gen 3">
+            <label for="estrellas">Calificación</label>
+            <select id="estrellas" name="estrellas">
+                <option value="5">★★★★★ — 5 estrellas</option>
+                <option value="4">★★★★☆ — 4 estrellas</option>
+                <option value="3">★★★☆☆ — 3 estrellas</option>
+                <option value="2">★★☆☆☆ — 2 estrellas</option>
+                <option value="1">★☆☆☆☆ — 1 estrella</option>
+            </select>
+            <button type="submit">Guardar reseña</button>
+        </form>
+    </section>
+</main>
+{% endblock %}

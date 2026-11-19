@@ -1,0 +1,43 @@
+{% extends 'biciapp/base.html' %}
+{% load static %}
+
+{% block title %}BiciStore | Bicicletas{% endblock %}
+
+{% block content %}
+<main>
+    <h1 class="titulo">{{ titulo }}</h1>
+    <p class="descripcion">{{ descripcion }}</p>
+
+    <div class="filtros" aria-label="Filtrar bicicletas">
+        <a href="{% url 'productos' %}" class="{% if not categoria_actual %}seleccionado{% endif %}">🚲 Todas</a>
+        {% for categoria in categorias %}
+            <a href="{% url 'productos' %}?categoria={{ categoria.slug }}" class="{% if categoria_actual == categoria.slug %}seleccionado{% endif %}">{{ categoria.icono }} {{ categoria.nombre }}</a>
+        {% endfor %}
+    </div>
+
+    <section class="productos" aria-label="Catálogo de bicicletas">
+        {% for producto in productos %}
+            <article class="producto">
+                <div class="imagen-bici">
+                    <img src="{% static 'biciapp/imagenes/' %}{{ producto.imagen }}" alt="{{ producto.nombre }}">
+                </div>
+                <span class="chip">{{ producto.categoria_nombre }}</span>
+                <h2>{{ producto.nombre }}</h2>
+                <p>{{ producto.descripcion }}</p>
+                <ul class="caracteristicas">
+                    {% for caracteristica in producto.caracteristicas %}
+                        <li>✓ {{ caracteristica }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>${{ producto.precio|floatformat:2 }} MXN</h3>
+                <form method="post" action="{% url 'agregar_carrito' producto.id %}">
+                    {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button class="boton-producto" type="submit">🛒 Comprar</button>
+                </form>
+            </article>
+        {% empty %}
+            <p class="sin-resultados">No hay bicicletas disponibles en esta categoría.</p>
+        {% endfor %}
+    </section>
+</main>
+{% endblock %}

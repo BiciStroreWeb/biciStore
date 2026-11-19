@@ -1,0 +1,5 @@
+{% extends 'biciapp/base.html' %}
+{% block title %}BiciStore | Compra confirmada{% endblock %}
+{% block content %}
+<main><section class="confirmacion"><div class="confirmacion-icono">✓</div><h1>Compra realizada</h1><p>Gracias, <strong>{{ nombre }}</strong>. Enviamos el resumen de tu compra a <strong>{{ correo }}</strong>.</p><p class="folio">Folio: <strong>{{ folio }}</strong></p><div class="detalle-confirmacion">{% for linea in lineas %}<p>{{ linea.cantidad }} × {{ linea.producto.nombre }} <strong>${{ linea.subtotal|floatformat:2 }} MXN</strong></p>{% endfor %}<h2>Total: ${{ total|floatformat:2 }} MXN</h2></div><a class="boton" href="{% url 'productos' %}">Volver al catálogo</a></section></main>
+{% endblock %}

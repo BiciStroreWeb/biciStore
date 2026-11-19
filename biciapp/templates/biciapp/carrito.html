@@ -1,0 +1,28 @@
+{% extends 'biciapp/base.html' %}
+{% load static %}
+{% block title %}BiciStore | Carrito{% endblock %}
+{% block content %}
+<main>
+    <h1 class="titulo">Tu carrito</h1>
+    <p class="descripcion">Revisa tus bicicletas antes de continuar con la compra.</p>
+    {% if lineas %}
+    <section class="carrito-layout">
+        <div class="carrito-lista">
+            <form method="post" action="{% url 'actualizar_carrito' %}">
+                {% csrf_token %}
+                {% for linea in lineas %}
+                <article class="linea-carrito">
+                    <img src="{% static 'biciapp/imagenes/' %}{{ linea.producto.imagen }}" alt="{{ linea.producto.nombre }}">
+                    <div class="linea-info"><h2>{{ linea.producto.nombre }}</h2><p>{{ linea.producto.categoria_nombre }}</p><strong>${{ linea.producto.precio|floatformat:2 }} MXN</strong></div>
+                    <label class="cantidad">Cantidad<input type="number" name="cantidad_{{ linea.producto.id }}" value="{{ linea.cantidad }}" min="0" max="99"></label>
+                    <div class="subtotal">${{ linea.subtotal|floatformat:2 }} MXN<br><button class="enlace-eliminar" type="submit" name="quitar" value="{{ linea.producto.id }}">Eliminar</button></div>
+                </article>
+                {% endfor %}
+                <button class="boton-secundario" type="submit">Actualizar carrito</button>
+            </form>
+        </div>
+        <aside class="resumen-compra"><h2>Resumen</h2><p>{{ cantidad }} artículo{{ cantidad|pluralize }}</p><h3>Total: ${{ total|floatformat:2 }} MXN</h3><a class="boton" href="{% url 'checkout' %}">Continuar al pago</a></aside>
+    </section>
+    {% else %}<section class="vacio"><h2>Tu carrito está vacío</h2><p>Agrega una bicicleta desde el catálogo para comenzar.</p><a class="boton" href="{% url 'productos' %}">Ver bicicletas</a></section>{% endif %}
+</main>
+{% endblock %}

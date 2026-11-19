@@ -1,0 +1,32 @@
+{% extends 'biciapp/base.html' %}
+
+{% block title %}BiciStore | Editar reseña{% endblock %}
+
+{% block content %}
+<main>
+    <h1 class="titulo">Editar reseña</h1>
+    <p class="descripcion">Modifica los datos de tu opinión y guarda los cambios.</p>
+
+    <section class="opinion formulario-resena">
+        <form method="post">
+            {% csrf_token %}
+            <label for="texto">Tu reseña</label>
+            <textarea id="texto" name="texto" required>{{ resena.texto }}</textarea>
+            <label for="autor">Tu nombre</label>
+            <input id="autor" name="autor" type="text" value="{{ resena.autor }}" required>
+            <label for="compra">Producto comprado (opcional)</label>
+            <input id="compra" name="compra" type="text" value="{{ resena.compra }}">
+            <label for="estrellas">Calificación</label>
+            <select id="estrellas" name="estrellas">
+                {% for valor in "12345" %}
+                    <option value="{{ valor }}" {% if resena.estrellas|stringformat:"s" == valor %}selected{% endif %}>{{ valor }} estrella{{ valor|pluralize }}</option>
+                {% endfor %}
+            </select>
+            <div class="acciones-formulario">
+                <button type="submit">Guardar cambios</button>
+                <a class="boton-secundario" href="{% url 'resenas' %}">Cancelar</a>
+            </div>
+        </form>
+    </section>
+</main>
+{% endblock %}

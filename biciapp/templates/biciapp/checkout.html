@@ -1,0 +1,21 @@
+{% extends 'biciapp/base.html' %}
+{% block title %}BiciStore | Finalizar compra{% endblock %}
+{% block content %}
+<main>
+    <h1 class="titulo">Finalizar compra</h1>
+    <p class="descripcion">Completa tus datos para confirmar tu compra.</p>
+    <section class="checkout-layout">
+        <div class="formulario formulario-pago">
+            <form method="post" autocomplete="off">
+                {% csrf_token %}
+                <label for="nombre">Nombre del comprador</label><input id="nombre" name="nombre" type="text" required maxlength="120" autocomplete="name">
+                <label for="correo">Correo electrónico</label><input id="correo" name="correo" type="email" required maxlength="254" autocomplete="email">
+                <label for="numero_tarjeta">Número de tarjeta</label><input id="numero_tarjeta" name="numero_tarjeta" type="text" inputmode="numeric" pattern="[0-9 ]{13,23}" maxlength="23" minlength="13" placeholder="Sólo números" required aria-describedby="ayuda-tarjeta"><small id="ayuda-tarjeta">Escribe de 13 a 19 dígitos. No se almacenará.</small>
+                <div class="campos-dobles"><div><label for="vencimiento">Vencimiento</label><input id="vencimiento" name="vencimiento" type="text" inputmode="numeric" pattern="(0[1-9]|1[0-2])/[0-9]{2}" maxlength="5" placeholder="MM/AA" required></div><div><label for="cvv">CVV</label><input id="cvv" name="cvv" type="password" inputmode="numeric" pattern="[0-9]{3,4}" maxlength="4" minlength="3" placeholder="3 o 4 dígitos" required></div></div>
+                <button class="boton" type="submit">Confirmar compra</button>
+            </form>
+        </div>
+        <aside class="resumen-compra"><h2>Tu compra</h2>{% for linea in lineas %}<p>{{ linea.cantidad }} × {{ linea.producto.nombre }}</p>{% endfor %}<h3>Total: ${{ total|floatformat:2 }} MXN</h3></aside>
+    </section>
+</main>
+{% endblock %}

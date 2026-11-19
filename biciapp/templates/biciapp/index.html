@@ -1,0 +1,53 @@
+{% extends 'biciapp/base.html' %}
+
+{% block title %}BiciStore | Catálogo de Bicicletas{% endblock %}
+
+{% block content %}
+<main>
+    <section class="hero">
+        <div class="hero-contenido">
+            <span class="etiqueta">BiciStore</span>
+            <h1>Encuentra tu bicicleta ideal</h1>
+            <p>Descubre bicicletas para montaña, ciudad y carretera, diseñadas para acompañarte en cada recorrido.</p>
+            <a href="{% url 'productos' %}" class="boton">Ver bicicletas</a>
+        </div>
+    </section>
+
+    <section class="seccion">
+        <h2 class="titulo">Explora nuestras categorías</h2>
+        <p class="descripcion">Elige el tipo de bicicleta que mejor se adapte a tu estilo.</p>
+        <div class="categorias">
+            {% for categoria in categorias %}
+                <article class="categoria">
+                    <span aria-hidden="true">{{ categoria.icono }}</span>
+                    <h3>{{ categoria.nombre }}</h3>
+                    {% if categoria.slug == 'montana' %}
+                        <p>Bicicletas resistentes para disfrutar de senderos y caminos difíciles.</p>
+                    {% elif categoria.slug == 'ciudad' %}
+                        <p>Modelos cómodos y prácticos para tus recorridos diarios.</p>
+                    {% else %}
+                        <p>Bicicletas ligeras diseñadas para alcanzar grandes velocidades.</p>
+                    {% endif %}
+                    <a href="{% url 'productos' %}?categoria={{ categoria.slug }}">Ver modelos</a>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="seccion">
+        <h2 class="titulo">¿Por qué elegir BiciStore?</h2>
+        <div class="beneficios">
+            <article class="beneficio"><span>🚲</span><h3>Modelos variados</h3><p>Encuentra bicicletas para diferentes estilos, terrenos y necesidades.</p></article>
+            <article class="beneficio"><span>🛠️</span><h3>Calidad</h3><p>Seleccionamos modelos conocidos por su calidad y buen rendimiento.</p></article>
+            <article class="beneficio"><span>💰</span><h3>Precios competitivos</h3><p>Opciones para diferentes presupuestos sin sacrificar calidad.</p></article>
+            <article class="beneficio"><span>📦</span><h3>Accesorios</h3><p>Complementa tu bicicleta con accesorios útiles para tus recorridos.</p></article>
+        </div>
+    </section>
+
+    <section class="cta">
+        <h2>¿Listo para comenzar?</h2>
+        <p>Explora nuestro catálogo y encuentra la bicicleta perfecta para ti.</p>
+        <a href="{% url 'productos' %}" class="boton boton-claro">Ver catálogo</a>
+    </section>
+</main>
+{% endblock %}

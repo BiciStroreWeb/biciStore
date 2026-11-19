@@ -1,0 +1,22 @@
+{% extends 'biciapp/base.html' %}
+
+{% block title %}BiciStore | Accesorios{% endblock %}
+
+{% block content %}
+<main>
+    <h1 class="titulo">🔧 Accesorios</h1>
+    <p class="descripcion">Todo lo que necesitas para complementar tu bicicleta.</p>
+
+    <section class="productos" aria-label="Accesorios para bicicletas">
+        {% for accesorio in accesorios %}
+            <article class="producto">
+                <div class="icono-accesorio" aria-hidden="true">{{ accesorio.icono }}</div>
+                <h2>{{ accesorio.nombre }}</h2>
+                <p>{{ accesorio.descripcion }}</p>
+                <h3>{{ accesorio.precio }}</h3>
+                <a href="{% url 'contacto' %}?producto={{ accesorio.nombre|urlencode }}" class="boton-producto">Solicitar información</a>
+            </article>
+        {% endfor %}
+    </section>
+</main>
+{% endblock %}

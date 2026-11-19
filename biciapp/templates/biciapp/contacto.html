@@ -1,0 +1,40 @@
+{% extends 'biciapp/base.html' %}
+
+{% block title %}BiciStore | Contacto{% endblock %}
+
+{% block content %}
+<main>
+    <h1 class="titulo">📞 Contáctanos</h1>
+    <p class="descripcion">Estamos para ayudarte a encontrar la bicicleta ideal.</p>
+
+    <div class="contacto">
+        <section class="datos">
+            <h2>Información de contacto</h2>
+            <p>📍 Av. Principal #123, Ciudad de México</p>
+            <p>📞 <a href="tel:+525512345678">55 1234 5678</a></p>
+            <p>✉️ <a href="mailto:contacto@bicistore.com">contacto@bicistore.com</a></p>
+            <p>🕐 Lunes - Sábado: 9:00 AM - 7:00 PM</p>
+        </section>
+
+        <section class="formulario">
+            <h2>Envíanos un mensaje</h2>
+            <form method="post" action="{% url 'contacto' %}">
+                {% csrf_token %}
+                <label for="nombre">Nombre:</label>
+                <input id="nombre" name="nombre" type="text" value="{{ datos.nombre }}" placeholder="Escribe tu nombre" autocomplete="name" required>
+
+                <label for="correo">Correo electrónico:</label>
+                <input id="correo" name="correo" type="email" value="{{ datos.correo }}" placeholder="correo@ejemplo.com" autocomplete="email" required>
+
+                <label for="asunto">Asunto:</label>
+                <input id="asunto" name="asunto" type="text" value="{{ datos.asunto }}" placeholder="¿En qué podemos ayudarte?" required>
+
+                <label for="mensaje">Mensaje:</label>
+                <textarea id="mensaje" name="mensaje" placeholder="Escribe tu mensaje..." required>{{ datos.mensaje }}</textarea>
+
+                <button type="submit">Enviar mensaje</button>
+            </form>
+        </section>
+    </div>
+</main>
+{% endblock %}
