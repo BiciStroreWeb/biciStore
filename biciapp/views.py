@@ -1,13 +1,50 @@
+import json
 import re
 import uuid
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 from decimal import Decimal
 
 from django.conf import settings
 from django.contrib import messages
-from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .models import Bicicleta, Resena
+
+
+def _enviar_correo_brevo(destinatario, asunto, cuerpo):
+    """Envía un correo transaccional mediante la API HTTP de Brevo."""
+    if not settings.BREVO_API_KEY:
+        raise RuntimeError("Falta configurar BREVO_API_KEY en el entorno.")
+
+    datos = {
+        "sender": {
+            "name": settings.BREVO_SENDER_NAME,
+            "email": settings.BREVO_SENDER_EMAIL,
+        },
+        "to": [{"email": destinatario}],
+        "subject": asunto,
+        "textContent": cuerpo,
+    }
+    solicitud = Request(
+        "https://api.brevo.com/v3/smtp/email",
+        data=json.dumps(datos).encode("utf-8"),
+        headers={
+            "accept": "application/json",
+            "api-key": settings.BREVO_API_KEY,
+            "content-type": "application/json",
+        },
+        method="POST",
+    )
+    try:
+        with urlopen(solicitud, timeout=20) as respuesta:
+            if respuesta.status not in (200, 201, 202):
+                raise RuntimeError(f"Brevo respondió con estado {respuesta.status}.")
+    except HTTPError as error:
+        detalle = error.read().decode("utf-8", errors="replace")
+        raise RuntimeError(f"Brevo rechazó el correo (HTTP {error.code}): {detalle}") from error
+    except URLError as error:
+        raise RuntimeError(f"No fue posible conectar con Brevo: {error.reason}") from error
 
 
 PRODUCTOS = [
@@ -172,7 +209,16 @@ def checkout(request):
         folio = uuid.uuid4().hex[:10].upper()
         detalle = "\n".join(f"- {linea['producto']['nombre']} x {linea['cantidad']}: ${linea['subtotal']:,.2f} MXN" for linea in lineas)
         cuerpo = f"Hola {nombre},\n\nTu compra en BiciStore fue registrada correctamente.\n\nFolio: {folio}\nComprador: {nombre}\n\nProductos:\n{detalle}\n\nTotal: ${total:,.2f} MXN"
-        send_mail(f"Confirmación de compra #{folio} - BiciStore", cuerpo, settings.DEFAULT_FROM_EMAIL, [correo], fail_silently=False)
+        try:
+            _enviar_correo_brevo(
+                correo,
+                f"Confirmación de compra #{folio} - BiciStore",
+                cuerpo,
+            )
+            messages.success(request, "Tu comprobante fue enviado a tu correo electrónico.")
+        except RuntimeError as error:
+            # La compra de demostración continúa, pero avisamos que el correo falló.
+            messages.warning(request, f"La compra se procesó, pero no pudimos enviar el correo: {error}")
         request.session["carrito"] = {}
         return render(request, "biciapp/compra_exitosa.html", {"folio": folio, "nombre": nombre, "correo": correo, "lineas": lineas, "total": total})
     return render(request, "biciapp/checkout.html", {"lineas": lineas, "total": total, "cantidad": cantidad})
