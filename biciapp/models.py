@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class Bicicleta(models.Model):
@@ -20,6 +21,10 @@ class Resena(models.Model):
     compra = models.CharField(max_length=150, blank=True)
     creada_en = models.DateTimeField(auto_now_add=True)
     actualizada_en = models.DateTimeField(auto_now=True)
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
+        null=True, blank=True, related_name="resenas_bicistore"
+    )
 
     class Meta:
         ordering = ["-creada_en", "-id"]
