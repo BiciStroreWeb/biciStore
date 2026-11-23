@@ -9,6 +9,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 from django.contrib.auth.models import User
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
@@ -246,21 +247,39 @@ def _datos_resena(request):
 
 def resenas(request):
     if request.method == "POST":
+        if not request.user.is_authenticated:
+            messages.info(request, "Inicia sesión para publicar una reseña.")
+            return redirect("iniciar_sesion")
         texto, autor, compra, estrellas = _datos_resena(request)
         if texto:
-            Resena.objects.create(texto=texto, autor=autor, compra=compra, estrellas=estrellas)
+            Resena.objects.create(
+                texto=texto,
+                autor=request.user.get_full_name() or request.user.username,
+                compra=compra,
+                estrellas=estrellas,
+                usuario=request.user,
+            )
             messages.success(request, "Gracias por compartir tu experiencia. Tu reseña se guardó correctamente.")
         else:
             messages.error(request, "Escribe una reseña antes de enviarla.")
-    return render(request, "biciapp/resenas.html", {"resenas": Resena.objects.all()})
+        return redirect("resenas")
+    return render(request, "biciapp/resenas.html", {"resenas": Resena.objects.select_related("usuario").all()})
 
 
+@login_required
 def editar_resena(request, resena_id):
     resena = get_object_or_404(Resena, pk=resena_id)
+    if not (request.user.is_staff or resena.usuario_id == request.user.id):
+        return HttpResponseForbidden("Solo puedes editar tus propias reseñas.")
     if request.method == "POST":
         texto, autor, compra, estrellas = _datos_resena(request)
         if texto:
-            resena.texto, resena.autor, resena.compra, resena.estrellas = texto, autor, compra, estrellas
+            resena.texto = texto
+            resena.compra = compra
+            resena.estrellas = estrellas
+            # El cliente no puede cambiar la identidad del autor desde el formulario.
+            if request.user.is_staff:
+                resena.autor = autor or resena.autor
             resena.save()
             messages.success(request, "La reseña se actualizó correctamente.")
             return redirect("resenas")
@@ -268,11 +287,15 @@ def editar_resena(request, resena_id):
     return render(request, "biciapp/editar_resena.html", {"resena": resena})
 
 
+@login_required
 def eliminar_resena(request, resena_id):
+    if request.method != "POST":
+        return redirect("resenas")
     resena = get_object_or_404(Resena, pk=resena_id)
-    if request.method == "POST":
-        resena.delete()
-        messages.success(request, "La reseña se eliminó correctamente.")
+    if not (request.user.is_staff or resena.usuario_id == request.user.id):
+        return HttpResponseForbidden("Solo puedes eliminar tus propias reseñas.")
+    resena.delete()
+    messages.success(request, "La reseña se eliminó correctamente.")
     return redirect("resenas")
 
 
@@ -355,7 +378,7 @@ def iniciar_sesion(request):
                 except RuntimeError:
                     pass
             messages.success(request, "Iniciaste sesión correctamente.")
-            return redirect("admin:index" if usuario.is_staff else "perfil")
+            return redirect("panel_administracion" if usuario.is_staff else "perfil")
         messages.error(request, "El correo/usuario o la contraseña son incorrectos.")
     return render(request, "biciapp/iniciar_sesion.html")
 
@@ -386,6 +409,21 @@ def perfil(request):
                 messages.success(request, "Tu perfil se actualizó correctamente.")
                 return redirect("perfil")
     return render(request, "biciapp/perfil.html")
+
+
+
+@login_required
+def panel_administracion(request):
+    """Panel privado de administración integrado en la tienda."""
+    if not request.user.is_staff:
+        return HttpResponseForbidden("No tienes permiso para acceder a esta sección.")
+    contexto = {
+        "total_clientes": User.objects.filter(is_staff=False, is_superuser=False).count(),
+        "total_bicicletas": Bicicleta.objects.count(),
+        "total_resenas": Resena.objects.count(),
+        "resenas": Resena.objects.select_related("usuario").all()[:50],
+    }
+    return render(request, "biciapp/panel_administracion.html", contexto)
 
 
 def cerrar_sesion(request):
