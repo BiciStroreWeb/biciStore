@@ -608,3 +608,86 @@ select {
 .detalle-confirmacion p strong { float: right; }
 
 @media (max-width: 700px) { .carrito-layout, .checkout-layout { grid-template-columns: 1fr; } .linea-carrito { grid-template-columns: 70px 1fr; } .linea-carrito img { width: 70px; } .cantidad, .subtotal { grid-column: 2; text-align: left; } .resumen-compra { position: static; } }
+
+
+/* ===== BOTÓN FLOTANTE DE WHATSAPP ===== */
+.whatsapp-flotante {
+    position: fixed;
+    width: 62px;
+    height: 62px;
+    right: 25px;
+    bottom: 25px;
+    background-color: #25D366;
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    z-index: 9999;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    text-decoration: none;
+}
+
+.whatsapp-flotante:hover {
+    background-color: #1ebe5d;
+    transform: scale(1.1);
+}
+
+.whatsapp-flotante svg {
+    width: 36px;
+    height: 36px;
+    fill: #ffffff;
+}
+
+/* ===== NAVEGACIÓN DE CLIENTES ===== */
+.site-header nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.site-header nav a {
+    text-decoration: none;
+}
+
+/* ===== FORMULARIO DE CERRAR SESIÓN ===== */
+.form-cerrar-sesion {
+    display: inline-flex;
+    margin: 0;
+}
+
+.form-cerrar-sesion button {
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: inherit;
+    background-color: #e63946;
+    color: #ffffff;
+}
+
+.form-cerrar-sesion button:hover {
+    background-color: #bd2633;
+}
+
+/* ===== ADAPTACIÓN A CELULARES ===== */
+@media (max-width: 600px) {
+    .whatsapp-flotante {
+        width: 56px;
+        height: 56px;
+        right: 16px;
+        bottom: 16px;
+    }
+
+    .whatsapp-flotante svg {
+        width: 32px;
+        height: 32px;
+    }
+
+    .site-header nav {
+        gap: 8px;
+    }
+}
