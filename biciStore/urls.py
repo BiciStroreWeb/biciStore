@@ -17,4 +17,8 @@ urlpatterns = [
     path("resenas/<int:resena_id>/editar/", views.editar_resena, name="editar_resena"),
     path("resenas/<int:resena_id>/eliminar/", views.eliminar_resena, name="eliminar_resena"),
     path("contacto/", views.contacto, name="contacto"),
+    path("registro/", views.registro, name="registro"),
+    path("iniciar-sesion/", views.iniciar_sesion, name="iniciar_sesion"),
+    path("perfil/", views.perfil, name="perfil"),
+    path("cerrar-sesion/", views.cerrar_sesion, name="cerrar_sesion"),
 ]
