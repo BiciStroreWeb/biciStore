@@ -100,3 +100,4 @@ BREVO_SENDER_EMAIL = os.environ.get("BREVO_SENDER_EMAIL", "bicistore.sandezcorp@
 BREVO_SENDER_NAME = os.environ.get("BREVO_SENDER_NAME", "BiciStore")
 DEFAULT_FROM_EMAIL = BREVO_SENDER_EMAIL
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+LOGIN_URL = "/iniciar-sesion/"
