@@ -1,0 +1,13 @@
+{% extends 'biciapp/base.html' %}
+{% block title %}Mi perfil | BiciStore{% endblock %}
+{% block content %}
+<section class="seccion"><div class="formulario cuenta-form">
+<h1>Mi perfil</h1><p>Consulta y actualiza tus datos personales.</p>
+<form method="post">{% csrf_token %}
+<label for="nombre">Nombre</label><input id="nombre" name="nombre" type="text" value="{{ user.first_name }}" required>
+<label for="apellidos">Apellidos</label><input id="apellidos" name="apellidos" type="text" value="{{ user.last_name }}" required>
+<label for="correo">Correo electrónico</label><input id="correo" name="correo" type="email" value="{{ user.email }}" required>
+<button class="boton" type="submit">Guardar cambios</button></form>
+{% if user.is_staff %}<p><a href="{% url 'admin:index' %}">Ir al panel de administración</a></p>{% endif %}
+</div></section>
+{% endblock %}
