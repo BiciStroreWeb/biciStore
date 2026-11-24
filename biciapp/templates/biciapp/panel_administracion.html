@@ -1,0 +1,35 @@
+{% extends 'biciapp/base.html' %}
+{% block title %}Administración | BiciStore{% endblock %}
+{% block content %}
+<main class="seccion">
+    <h1 class="titulo">Panel de administración de BiciStore</h1>
+    <p class="descripcion">Bienvenido, {{ request.user.get_full_name|default:request.user.username }}. Desde aquí puedes supervisar la tienda y moderar las reseñas.</p>
+    <section class="resumen-admin" aria-label="Resumen de la tienda">
+        <article class="tarjeta-admin"><h2>{{ total_clientes }}</h2><p>Clientes registrados</p></article>
+        <article class="tarjeta-admin"><h2>{{ total_bicicletas }}</h2><p>Bicicletas en la base de datos</p></article>
+        <article class="tarjeta-admin"><h2>{{ total_resenas }}</h2><p>Reseñas publicadas</p></article>
+    </section>
+    <section class="administrar-resenas">
+        <h2>Moderación de reseñas</h2>
+        <p>Solo el personal administrador puede editar o eliminar reseñas.</p>
+        {% for resena in resenas %}
+            <article class="resena">
+                <div class="estrellas">{{ resena.estrellas_visual }}</div>
+                <h3>{{ resena.autor }}</h3>
+                <small>Cuenta: {% if resena.usuario %}{{ resena.usuario.email }}{% else %}Reseña anterior sin cuenta asociada{% endif %}</small>
+                <p>{{ resena.texto }}</p>
+                {% if resena.compra %}<small>Compra: {{ resena.compra }}</small>{% endif %}
+                <div class="acciones-resena">
+                    <a class="boton-secundario" href="{% url 'editar_resena' resena.id %}">Editar</a>
+                    <form method="post" action="{% url 'eliminar_resena' resena.id %}" onsubmit="return confirm('¿Seguro que quieres eliminar esta reseña?');">
+                        {% csrf_token %}
+                        <button class="boton-eliminar" type="submit">Eliminar</button>
+                    </form>
+                </div>
+            </article>
+        {% empty %}
+            <p>Todavía no hay reseñas.</p>
+        {% endfor %}
+    </section>
+</main>
+{% endblock %}
