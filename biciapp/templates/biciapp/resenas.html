@@ -14,17 +14,19 @@
                 <p>“{{ resena.texto }}”</p>
                 <h3>— {{ resena.autor }}</h3>
                 {% if resena.compra %}<small>Compra: {{ resena.compra }}</small>{% endif %}
+                {% if request.user.is_authenticated %}
                 {% if request.user.is_staff or resena.usuario_id == request.user.id %}
 <div class="acciones-resena">
     <a class="boton-secundario" href="{% url 'editar_resena' resena.id %}">Editar</a>
 
     <form method="post" action="{% url 'eliminar_resena' resena.id %}" onsubmit="return confirm('¿Seguro que quieres eliminar esta reseña?')">
         {% csrf_token %}
-        <button class="boton-eliminar" type="submit">Eliminar</button>
-    </form>
-</div>
-{% endif %}
-            </article>
+            <button class="boton-eliminar" type="submit">Eliminar</button>
+        </form>
+        </div>
+            {% endif %}
+        {% endif %}
+        </article>
         {% empty %}
             <p class="sin-resultados">Todavía no hay reseñas. ¡Sé el primero en escribir una!</p>
         {% endfor %}
