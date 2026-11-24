@@ -258,20 +258,20 @@ cuerpo = (
     f"PRODUCTOS:\n{detalle}\n\n"
     f"Total: ${total:.2f} MXN\n\n"
     f"Gracias por comprar en BiciStore."
-)
-        try:
+ 
+try:
             _enviar_correo_brevo(
                 correo,
                 f"Confirmación de compra #{folio} - BiciStore",
                 cuerpo,
             )
             messages.success(request, "Tu comprobante fue enviado a tu correo electrónico.")
-        except RuntimeError as error:
+except RuntimeError as error:
             # La compra de demostración continúa, pero avisamos que el correo falló.
             messages.warning(request, f"La compra se procesó, pero no pudimos enviar el correo: {error}")
-        request.session["carrito"] = {}
-        return render(request, "biciapp/compra_exitosa.html", {"folio": folio, "nombre": nombre, "correo": correo, "lineas": lineas, "total": total})
-    return render(request, "biciapp/checkout.html", {"lineas": lineas, "total": total, "cantidad": cantidad})
+request.session["carrito"] = {}
+return render(request, "biciapp/compra_exitosa.html", {"folio": folio, "nombre": nombre, "correo": correo, "lineas": lineas, "total": total})
+return render(request, "biciapp/checkout.html", {"lineas": lineas, "total": total, "cantidad": cantidad})
 
 
 def accesorios(request):
