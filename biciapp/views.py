@@ -194,10 +194,33 @@ def checkout(request):
     if request.method == "POST":
         nombre = request.POST.get("nombre", "").strip()
         correo = request.POST.get("correo", "").strip()
+        telefono = request.POST.get("telefono", "").strip()
+        calle = request.POST.get("calle", "").strip()
+        numero_exterior = request.POST.get("numero_exterior", "").strip()
+        numero_interior = request.POST.get("numero_interior", "").strip()
+        colonia = request.POST.get("colonia", "").strip()
+        ciudad = request.POST.get("ciudad", "").strip()
+        estado = request.POST.get("estado", "").strip()
+        codigo_postal = request.POST.get("codigo_postal", "").strip()
+        referencias = request.POST.get("referencias", "").strip()
         numero = re.sub(r"\s+", "", request.POST.get("numero_tarjeta", ""))
         vencimiento = request.POST.get("vencimiento", "").strip()
         cvv = request.POST.get("cvv", "").strip()
         errores = []
+        if not telefono:
+            errores.append("Escribe tu número de teléfono.")
+        if not calle:
+            errores.append("Escribe la calle de entrega.")
+        if not numero_exterior:
+            errores.append("Escribe el número exterior.")
+        if not colonia:
+            errores.append("Escribe la colonia.")
+        if not ciudad:
+            errores.append("Escribe la ciudad o municipio.")
+        if not estado:
+            errores.append("Escribe el estado.")
+        if not re.fullmatch(r"\d{5}", codigo_postal):
+            errores.append("El código postal debe contener 5 dígitos.")
         if len(nombre) < 2:
             errores.append("Escribe el nombre del comprador.")
         if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", correo):
