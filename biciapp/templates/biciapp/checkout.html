@@ -74,14 +74,21 @@
                 <textarea id="referencias" name="referencias"
                           rows="3" placeholder="Ej. Casa color blanco, frente a un parque..."></textarea>
 
-                <h2>Datos de pago (demostración)</h2>
+                <h2>Datos de pago</h2>
 
                 <p class="descripcion">
-                    Esta tienda utiliza datos ficticios. No se realizará ningún
-                    cobro ni se procesarán pagos reales.
+                    Ingrese sus datos.
                 </p>
-
-                <label for="numero_tarjeta">Número de tarjeta ficticio</label>
+                <label for="nombre_tarjeta">Nombre del titular de la tarjeta</label>
+                <input
+                    id="nombre_tarjeta"
+                    name="nombre_tarjeta"
+                    type="text"
+                    placeholder="Nombre como aparece en la tarjeta"
+                    maxlength="120"
+                    required>
+                
+                <label for="numero_tarjeta">Número de tarjeta</label>
                 <input id="numero_tarjeta" name="numero_tarjeta"
                        type="text" inputmode="numeric"
                        maxlength="19" placeholder="Sólo números" required>
@@ -95,7 +102,7 @@
                     </div>
 
                     <div>
-                        <label for="cvv">CVV ficticio</label>
+                        <label for="cvv">CVV</label>
                         <input id="cvv" name="cvv" type="text"
                                inputmode="numeric" maxlength="4"
                                placeholder="3 o 4 dígitos" required>
