@@ -258,7 +258,8 @@ cuerpo = (
     f"PRODUCTOS:\n{detalle}\n\n"
     f"Total: ${total:.2f} MXN\n\n"
     f"Gracias por comprar en BiciStore."
- 
+)
+
 try:
             _enviar_correo_brevo(
                 correo,
