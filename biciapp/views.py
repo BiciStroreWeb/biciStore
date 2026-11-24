@@ -134,7 +134,7 @@ def productos(request):
         descripcion = "Descubre algunos de los modelos más populares de bicicletas."
     return render(request, "biciapp/productos.html", {"productos": productos_filtrados, "categorias": CATEGORIAS, "categoria_actual": categoria, "titulo": titulo, "descripcion": descripcion})
 
-
+@login_required
 def agregar_carrito(request, producto_id):
     if request.method != "POST":
         return redirect("productos")
