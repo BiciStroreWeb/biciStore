@@ -206,7 +206,10 @@ def checkout(request):
         numero = re.sub(r"\s+", "", request.POST.get("numero_tarjeta", ""))
         vencimiento = request.POST.get("vencimiento", "").strip()
         cvv = request.POST.get("cvv", "").strip()
+        nombre_tarjeta = request.POST.get("nombre_tarjeta", "").strip()
         errores = []
+        if len(nombre_tarjeta) < 2 or len(nombre_tarjeta) > 120:
+            errores.append("Escribe el nombre del titular de la tarjeta.")
         if not telefono:
             errores.append("Escribe tu número de teléfono.")
         if not calle:
