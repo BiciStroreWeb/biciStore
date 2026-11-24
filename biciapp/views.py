@@ -185,7 +185,7 @@ def quitar_carrito(request, producto_id):
         messages.success(request, "Producto eliminado del carrito.")
     return redirect("carrito")
 
-
+@login_required
 def checkout(request):
     lineas, total, cantidad = _carrito_productos(request)
     if not lineas:
