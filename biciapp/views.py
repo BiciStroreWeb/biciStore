@@ -237,7 +237,28 @@ def checkout(request):
             return render(request, "biciapp/checkout.html", {"lineas": lineas, "total": total, "cantidad": cantidad})
         folio = uuid.uuid4().hex[:10].upper()
         detalle = "\n".join(f"- {linea['producto']['nombre']} x {linea['cantidad']}: ${linea['subtotal']:,.2f} MXN" for linea in lineas)
-        cuerpo = f"Hola {nombre},\n\nTu compra en BiciStore fue registrada correctamente.\n\nFolio: {folio}\nComprador: {nombre}\n\nProductos:\n{detalle}\n\nTotal: ${total:,.2f} MXN"
+        direccion = (
+    f"Calle: {calle}, número exterior: {numero_exterior}\n"
+    f"Número interior: {numero_interior or 'No especificado'}\n"
+    f"Colonia: {colonia}\n"
+    f"Ciudad o municipio: {ciudad}\n"
+    f"Estado: {estado}\n"
+    f"Código postal: {codigo_postal}\n"
+    f"Referencias: {referencias or 'Sin referencias'}"
+)
+
+cuerpo = (
+    f"Hola {nombre},\n\n"
+    f"Tu compra en BiciStore fue registrada correctamente.\n\n"
+    f"Folio: {folio}\n"
+    f"Comprador: {nombre}\n"
+    f"Correo: {correo}\n"
+    f"Teléfono: {telefono}\n\n"
+    f"DIRECCIÓN DE ENTREGA:\n{direccion}\n\n"
+    f"PRODUCTOS:\n{detalle}\n\n"
+    f"Total: ${total:.2f} MXN\n\n"
+    f"Gracias por comprar en BiciStore."
+)
         try:
             _enviar_correo_brevo(
                 correo,
